@@ -1,0 +1,2 @@
+select c1_0.id,c1_0.checking_account_id,c1_0.amount,c1_0.operation,c1_0.operation_date
+from checking_account_transactions c1_0 order by c1_0.operation_date desc offset 0 rows fetch first 1000 rows only

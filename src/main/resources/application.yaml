@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: Nova-Bank
+
+  datasource:
+    url: jdbc:h2:file:/Users/haytham.dahri/nova-bank
+    username: novabank
+    password: novabank
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+  h2:
+    console:
+      enabled: true
+  batch:
+    jdbc:
+      initialize-schema: always
+      schema: classpath:org/springframework/batch/core/schema-h2.sql
+    job:
+      enabled: false
+
+
+server:
+  port: 8080
+
+batch-processing:
+  transactions:
+    inputs:
+      file: data/transactions/checking-accounts-transactions.csv
+
+nova:
+  bank:
+    defaults:
+      page: 0
+      size: 50
