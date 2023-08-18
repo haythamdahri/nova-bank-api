@@ -8,7 +8,6 @@ import org.springframework.data.jpa.domain.Specification;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BankUserSpecifications {
 
-
     public static Specification<BankUserEntity> firstNameContains(final String search) {
         return (bankUser, cq, cb) -> cb.like(bankUser.get("firstName"), "%" + search + "%");
     }

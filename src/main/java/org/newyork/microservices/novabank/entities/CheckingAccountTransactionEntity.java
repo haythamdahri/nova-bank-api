@@ -17,15 +17,15 @@ import lombok.experimental.SuperBuilder;
 public class CheckingAccountTransactionEntity extends TransactionEntity {
 
     @ManyToOne(
-            fetch = FetchType.EAGER,
             cascade = {
                     CascadeType.DETACH,
                     CascadeType.MERGE,
                     CascadeType.PERSIST,
                     CascadeType.REFRESH
-            }
+            },
+            fetch = FetchType.LAZY
     )
-    @JoinColumn(name = "checking_account_id")
+    @JoinColumn(name = "account_id")
     private CheckingAccountEntity account;
 
 }

@@ -7,22 +7,24 @@ import org.apache.commons.lang3.StringUtils;
 import org.newyork.microservices.novabank.dao.CheckingAccountTransactionRepository;
 import org.newyork.microservices.novabank.dao.SavingAccountTransactionRepository;
 import org.newyork.microservices.novabank.dto.TransactionDTO;
+import org.newyork.microservices.novabank.dto.TransactionSearchRequestDTO;
 import org.newyork.microservices.novabank.entities.CheckingAccountEntity;
 import org.newyork.microservices.novabank.entities.CheckingAccountTransactionEntity;
 import org.newyork.microservices.novabank.entities.Operation;
 import org.newyork.microservices.novabank.mappers.CheckingAccountTransactionMapper;
 import org.newyork.microservices.novabank.mappers.SavingAccountTransactionMapper;
-import org.newyork.microservices.novabank.services.CheckingAccountService;
 import org.newyork.microservices.novabank.services.TransactionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import static java.util.Optional.ofNullable;
+import static org.newyork.microservices.novabank.specifications.TransactionSpecifications.*;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +49,36 @@ public class TransactionServiceImpl implements TransactionService {
                                 Sort.by(Sort.Direction.valueOf(StringUtils.toRootUpperCase(direction)), sort)
                         )
                 ).map(checkingAccountSavingAccountTransactionMapper::toDTO);
+    }
+
+    @Override
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Page<TransactionDTO> getCheckingAccountTransactions(
+            final TransactionSearchRequestDTO transactionSearchRequest,
+            final int page,
+            final int size,
+            final String direction,
+            final String... sort
+    ) {
+        log.info("Retrieving checking account transactions by user account: {}", transactionSearchRequest);
+        Specification<CheckingAccountTransactionEntity> checkingAccountTransactionEntitySpecification =
+                Specification.where(accountNumberEquals(transactionSearchRequest.getAccountNumber()));
+        if (transactionSearchRequest.getStartDateTime() != null && transactionSearchRequest.getEndDateTime() != null) {
+            checkingAccountTransactionEntitySpecification = checkingAccountTransactionEntitySpecification.and(
+                    betweenStartDateAndEndDate(
+                            transactionSearchRequest.getStartDateTime(),
+                            transactionSearchRequest.getEndDateTime()
+                    )
+            );
+        }
+        return checkingAccountTransactionRepository.findAll(
+                checkingAccountTransactionEntitySpecification,
+                PageRequest.of(
+                        page,
+                        size,
+                        Sort.by(Sort.Direction.valueOf(StringUtils.toRootUpperCase(direction)), sort)
+                )
+        ).map(checkingAccountSavingAccountTransactionMapper::toDTO);
     }
 
     @Override
