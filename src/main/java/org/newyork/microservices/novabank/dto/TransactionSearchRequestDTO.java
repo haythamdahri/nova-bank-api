@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.newyork.microservices.novabank.entities.Operation;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -23,5 +24,8 @@ public class TransactionSearchRequestDTO implements Serializable {
 
     @JsonProperty("endDateTime")
     private LocalDateTime endDateTime;
+
+    @JsonProperty("operation")
+    private Operation operation;
 
 }

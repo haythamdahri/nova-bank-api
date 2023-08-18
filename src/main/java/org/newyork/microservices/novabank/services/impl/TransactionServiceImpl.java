@@ -63,12 +63,19 @@ public class TransactionServiceImpl implements TransactionService {
         log.info("Retrieving checking account transactions by user account: {}", transactionSearchRequest);
         Specification<CheckingAccountTransactionEntity> checkingAccountTransactionEntitySpecification =
                 Specification.where(accountNumberEquals(transactionSearchRequest.getAccountNumber()));
-        if (transactionSearchRequest.getStartDateTime() != null && transactionSearchRequest.getEndDateTime() != null) {
+        if (transactionSearchRequest.getStartDateTime() != null) {
             checkingAccountTransactionEntitySpecification = checkingAccountTransactionEntitySpecification.and(
-                    betweenStartDateAndEndDate(
-                            transactionSearchRequest.getStartDateTime(),
-                            transactionSearchRequest.getEndDateTime()
-                    )
+                    startDateAfter(transactionSearchRequest.getStartDateTime())
+            );
+        }
+        if (transactionSearchRequest.getEndDateTime() != null) {
+            checkingAccountTransactionEntitySpecification = checkingAccountTransactionEntitySpecification.and(
+                    endDateBefore(transactionSearchRequest.getEndDateTime())
+            );
+        }
+        if (transactionSearchRequest.getOperation() != null) {
+            checkingAccountTransactionEntitySpecification = checkingAccountTransactionEntitySpecification.and(
+                    operationEquals(transactionSearchRequest.getOperation())
             );
         }
         return checkingAccountTransactionRepository.findAll(

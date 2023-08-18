@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.RequiredArgsConstructor;
 import org.newyork.microservices.novabank.dto.TransactionDTO;
 import org.newyork.microservices.novabank.dto.TransactionSearchRequestDTO;
+import org.newyork.microservices.novabank.entities.Operation;
 import org.newyork.microservices.novabank.services.TransactionService;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -42,6 +43,7 @@ public class CheckingAccountTransactionController {
             @PathVariable(name = "accountNumber") String accountNumber,
             @RequestParam(name = "startDateTime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
             @RequestParam(name = "endDateTime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(name = "operation", required = false) Operation operation,
             @RequestParam(name = "page", defaultValue = "${nova.bank.defaults.page}") int page,
             @RequestParam(name = "size", defaultValue = "${nova.bank.defaults.size}") int size,
             @RequestParam(name = "sort", defaultValue = "operationDate") String[] sort,
@@ -53,6 +55,7 @@ public class CheckingAccountTransactionController {
                                 .accountNumber(accountNumber)
                                 .startDateTime(Optional.ofNullable(startDate).map(LocalDate::atStartOfDay).orElse(null))
                                 .endDateTime(Optional.ofNullable(endDate).map(endDateValue -> endDateValue.atTime(LocalTime.MAX)).orElse(null))
+                                .operation(operation)
                                 .build(),
                         page, size, direction, sort
                 )

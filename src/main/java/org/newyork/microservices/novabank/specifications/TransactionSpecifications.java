@@ -3,6 +3,7 @@ package org.newyork.microservices.novabank.specifications;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.newyork.microservices.novabank.entities.CheckingAccountTransactionEntity;
+import org.newyork.microservices.novabank.entities.Operation;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
@@ -33,6 +34,12 @@ public class TransactionSpecifications {
     public static Specification<CheckingAccountTransactionEntity> accountNumberEquals(final String accountNumber) {
         return (checkingAccountTransaction, cq, cb) -> cb.equal(
                 checkingAccountTransaction.get("account").get("accountNumber"), accountNumber
+        );
+    }
+
+    public static Specification<CheckingAccountTransactionEntity> operationEquals(final Operation operation) {
+        return (checkingAccountTransaction, cq, cb) -> cb.equal(
+                checkingAccountTransaction.get("operation"), operation
         );
     }
 
